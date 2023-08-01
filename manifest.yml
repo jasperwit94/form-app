@@ -4,7 +4,7 @@ modules:
       resource: main
       resolver:
         function: resolver
-      title: form-app
+      title: form app jasper
   function:
     - key: resolver
       handler: index.handler
