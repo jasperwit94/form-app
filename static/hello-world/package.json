@@ -4,7 +4,10 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@atlaskit/button": "^16.8.3",
     "@atlaskit/css-reset": "^6.5.3",
+    "@atlaskit/dropdown-menu": "^11.11.2",
+    "@atlaskit/dynamic-table": "^14.11.2",
     "@forge/bridge": "2.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
