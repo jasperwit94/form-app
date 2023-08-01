@@ -1,0 +1,15 @@
+modules:
+  jira:globalPage:
+    - key: form-app-hello-world-page
+      resource: main
+      resolver:
+        function: resolver
+      title: form-app
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: static/hello-world/build
+app:
+  id: ari:cloud:ecosystem::app/8d5cd4d5-259f-4e59-8474-36705356e1b5
