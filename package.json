@@ -9,6 +9,9 @@
     "eslint-plugin-react-hooks": "^4.2.0"
   },
   "dependencies": {
+    "@atlaskit/button": "^16.8.3",
+    "@atlaskit/dropdown-menu": "^11.11.2",
+    "@atlaskit/dynamic-table": "^14.11.2",
     "@forge/resolver": "1.5.13"
   }
 }

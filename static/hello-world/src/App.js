@@ -24,30 +24,35 @@ const presidents = [
     {
       id: 1,
       name: 'George Washington',
+      lastname: 'Washington',
       party: 'None, Federalist',
       term: '1789-1797',
     },
     {
       id: 2,
       name: 'John Adams',
+      lastname: 'Adams',
       party: 'Federalist',
       term: '1797-1801',
     },
     {
       id: 3,
       name: 'Thomas Jefferson',
+      lastname: 'Jefferson',
       party: 'Democratic-Republican',
       term: '1801-1809',
     },
     {
       id: 4,
       name: 'James Madison',
+      lastname: 'Madison',
       party: 'Democratic-Republican',
       term: '1809-1817',
     },
     {
       id: 5,
       name: 'James Monroe',
+      lastname: 'Monroe',
       party: 'Democratic-Republican',
       term: '1817-1825',
     },
@@ -307,6 +312,12 @@ function App() {
               width: withWidth ? 25 : undefined,
             },
             {
+              key: 'lastame',
+              content: 'Lastname',
+              isSortable: true,
+              width: withWidth ? 20 : undefined,
+            },
+            {
               key: 'party',
               content: 'Party',
               shouldTruncate: true,
@@ -346,6 +357,10 @@ function App() {
             ),
           },
           {
+            key: createKey(president.lastname),
+            content: president.lastname,
+          },
+          {
             key: createKey(president.party),
             content: president.party,
           },
@@ -363,6 +378,7 @@ function App() {
               <DropdownMenu trigger="More">
                 <DropdownItemGroup>
                   <DropdownItem>{president.name}</DropdownItem>
+                  <DropdownItem>{president.lastname}</DropdownItem>
                 </DropdownItemGroup>
               </DropdownMenu>
             ),
