@@ -12,6 +12,9 @@
     "@atlaskit/button": "^16.8.3",
     "@atlaskit/dropdown-menu": "^11.11.2",
     "@atlaskit/dynamic-table": "^14.11.2",
+    "@atlaskit/form": "^8.11.9",
+    "@atlaskit/modal-dialog": "^12.6.5",
+    "@atlaskit/textfield": "^5.6.3",
     "@forge/resolver": "1.5.13"
   }
 }

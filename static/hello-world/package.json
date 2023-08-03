@@ -8,6 +8,10 @@
     "@atlaskit/css-reset": "^6.5.3",
     "@atlaskit/dropdown-menu": "^11.11.2",
     "@atlaskit/dynamic-table": "^14.11.2",
+    "@atlaskit/form": "^8.11.9",
+    "@atlaskit/modal-dialog": "^12.6.5",
+    "@atlaskit/textarea": "^4.7.4",
+    "@atlaskit/textfield": "^5.6.3",
     "@forge/bridge": "2.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
