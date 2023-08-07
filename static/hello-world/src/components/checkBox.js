@@ -24,7 +24,7 @@ export default function CheckBox(){
       }
       
     }
-
+    // this function runs twice when the checkox get clicked
     checkIfChecked();
 
     return(
