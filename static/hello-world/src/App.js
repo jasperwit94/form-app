@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState, ChangeEvent, } from 'react';
 import { invoke } from '@forge/bridge';
 import Button from '@atlaskit/button';
 import DynamicTable from '@atlaskit/dynamic-table';
@@ -8,6 +8,7 @@ import DropdownMenu, {
   } from '@atlaskit/dropdown-menu'
 import Form, { Field, HelperMessage, ErrorMessage } from '@atlaskit/form';
 import Textfield from '@atlaskit/textfield';
+import { Checkbox } from '@atlaskit/checkbox';
   
 import Modal, {
     ModalBody,
@@ -17,23 +18,20 @@ import Modal, {
     ModalTransition,
   } from '@atlaskit/modal-dialog';
   import TextArea from '@atlaskit/textarea';
-const lorem = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    'Suspendisse tincidunt vehicula eleifend.',
-    'Nunc tristique nisi tortor, at pretium purus interdum sed.',
-    'Sed vel augue sit amet sapien elementum bibendum. Aenean aliquam elementum dui, quis euismod metus ultrices ut.',
-    'Curabitur est sapien, feugiat vel est eget, molestie suscipit nibh.',
-    'Nunc libero orci, lacinia id orci aliquam, pharetra facilisis leo.',
-    'Quisque et turpis nec lacus luctus ultrices quis vel nisi.',
-    'Cras maximus ex lorem, sit amet bibendum nibh placerat eu.',
-    'In hac habitasse platea dictumst. ',
-    'Duis molestie sem vel ante varius, rhoncus pretium arcu dictum.',
-  ];
+import GenericTextField from './components/generic/GenericTextField';
+import FirstNameTextField from './components/FirstNameTextField';
+import CommentTextArea from './components/CommentTextArea';
+import AddressTextArea from './components/AddressTextArea';
+import CheckBox from './components/checkBox';
+
 function App() {
     const [data, setData] = useState(null);
     const [presidents, setPresidents] = useState([])
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState('');
+    const [currentTableState, setCurrentTableState] = useState({
+      nextCursor : ''
+    })
     
     function createKey(input) {
         return input ? input.replace(/^(the|a|an)/, '').replace(/\s/g, '') : input;
@@ -57,20 +55,6 @@ function App() {
               isSortable: true,
               width: withWidth ? 20 : undefined,
             },
-            /*{
-              key: 'party',
-              content: 'Party',
-              shouldTruncate: true,
-              isSortable: true,
-              width: withWidth ? 15 : undefined,
-            },
-            {
-              key: 'term',
-              content: 'Term',
-              shouldTruncate: true,
-              isSortable: true,
-              width: withWidth ? 10 : undefined,
-            },*/
             {
               key: 'content',
               content: 'Comment',
@@ -89,18 +73,18 @@ function App() {
       const head = createHead(true);
       
       const rows = presidents.map((president, index) => ({
-        key: `row-${index}-${president.name}`,
+        key: `row-${index}-${president["first-name"]}`,
         isHighlighted: false,
         cells: [
           {
-            key: createKey(president.name),
+            key: createKey(president["first-name"]),
             content: (
-                <a href="https://atlassian.design">{president.name}</a>
+                <a href="https://atlassian.design">{president["first-name"]}</a>
             ),
           },
           {
-            key: createKey(president.lastname),
-            content: president.lastname,
+            key: createKey(president.address),
+            content: president.address,
           },
           /*{
             key: createKey(president.party),
@@ -111,8 +95,8 @@ function App() {
             content: president.term,
           },*/
           {
-            key: 'Lorem',
-            content: iterateThroughLorem(index),
+            key: createKey(president.comment),
+            content: president.comment,
           },
           {
             key: 'MoreDropdown',
@@ -129,54 +113,47 @@ function App() {
       }));
       
 
-    useEffect(() => {
-        console.log("my message")
-        invoke('getText', { example: 'my-invoke-variable' }).then(setPresidents);
-    }, []);
-
+   
     const onButtonClick = () => {
         console.log("button clicked 1")
     }
-    
-    const validateName = (value) => {
-      //console.log("ere i am ")
-      //console.log(value)
-        if (value === "Ian") {
-          return
-        }
-        //console.log(' shou bbe')
-        return " shoud be IAN"
-    }
-    const validateAddress = (value) => {
-      if (!value) {
-        return ;
-      }
-  
-      if (value.length < 5) {
-        return 'TOO_SHORT';
-      }
-  
-      //return (value);
-    };
+    useEffect(() => {
+      (async () => {
+        console.log("my message")
+      await getNextData()
+      })();
+    }, [1]);
+   
+
 
   const openModal = () => {
     setIsOpen(true)
   };
   const closeModal = useCallback(() => setIsOpen(false), []);
+  const getNextData = async () =>{
+    const tableState = await invoke('getData', { cursor: currentTableState.nextCursor});
+    console.log(rows)
+    setPresidents([...presidents, ...tableState.results.map(row => row.value)])
+    setCurrentTableState(tableState)
+  } 
+  const onSetPage = async (page) => {
+    if (page * 5 > presidents.length) {
+      console.log(" fetch new rows")
+      await getNextData()
+     
+    } else {
+    console.log(" do not do anything")
+    }
+  }
+  const onSubmit = async(data) => {
 
-  const onSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
-      const data = new FormData(e.target);
-      const obj = {};
-      data.forEach((val, key) => {
-        obj[key] = val;
-      });
-      console.log(obj)
-      setName(obj.name);
-    },
-    [setName],
-  );
+    console.log(" 111")
+    console.log(data)
+    const result = await invoke('addTableRow', { data });
+    console.log(result)
+
+
+  }
     return (
         <div>
       <Button appearance="primary" onClick={openModal}>
@@ -185,67 +162,18 @@ function App() {
       <ModalTransition>
         {isOpen && (
           <Modal onClose={closeModal}>
-             <Form onSubmit={data => console.log(data)}>
+             <Form onSubmit={onSubmit}>
              {({ formProps, submitting }) => (
                 <form {...formProps}>
               <ModalHeader>
                 <ModalTitle>Create a user</ModalTitle>
               </ModalHeader>
               <ModalBody>
-            
-                <Field id="name" name="name" label="Type your name to continue"  isRequired validate={validateName}>
-                  {({ fieldProps, error }) => (
-                    <Fragment>
-                      <Textfield
-                        {...fieldProps}
-                        placeholder="Ian Atlas"
-                        value={undefined}
-                      />
-                      {error  && (
-                      <ErrorMessage>
-                        {error}
-                      </ErrorMessage>
-                    )}
-                    </Fragment>
-                  )}
-                </Field>
-                <Field id="address" name="address" label="Fill in your adress"  isRequired validate={validateAddress}>
-                  {({ fieldProps, error }) => (
-                    <Fragment>
-                      <Textfield
-                        {...fieldProps}
-                        placeholder="Street town"
-                        value={undefined}
-                      />
-                      {error  && (
-                      <ErrorMessage>
-                        {error}
-                      </ErrorMessage>
-                    )}
-                    </Fragment>
-                  )}
-                </Field>
-                <Form
-      onSubmit={(formState) =>
-        console.log('form submitted', formState)}>
-                  {({ formProps }) => (
-                    <form {...formProps}>
-                      <Field label="comment" name="example-text">
-                        {({ fieldProps }) => (
-                          <Fragment>
-                            <TextArea
-                              placeholder="Comment"
-                              {...fieldProps}
-                            />
-                            <HelperMessage>
-                              Comment here
-                            </HelperMessage>
-                          </Fragment>
-                        )}
-                      </Field>
-                    </form>
-                  )}
-                </Form>
+                <FirstNameTextField/>
+                <AddressTextArea/>
+                <CheckBox/>
+                <CommentTextArea/>
+                
               </ModalBody>
               <ModalFooter>
                 <Button appearance="subtle" onClick={closeModal}>
@@ -262,13 +190,14 @@ function App() {
         )}
       </ModalTransition>
 
-            <DynamicTable
+    <DynamicTable
       head={head}
       rows={rows}
       rowsPerPage={5}
       defaultPage={1}
       loadingSpinnerSize="large"
       isRankable
+      onSetPage={onSetPage}
     />
   
         </div>

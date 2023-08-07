@@ -5,6 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@atlaskit/button": "^16.8.3",
+    "@atlaskit/checkbox": "^12.6.7",
     "@atlaskit/css-reset": "^6.5.3",
     "@atlaskit/dropdown-menu": "^11.11.2",
     "@atlaskit/dynamic-table": "^14.11.2",
