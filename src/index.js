@@ -19,6 +19,13 @@ resolver.define('getData', async(req) => {
     return res;
 });
 
+resolver.define('deleteTableRow', async(req) => {
+  console.log(req.payload.data);
+	//const rowId = payload.data;  
+	 await storage.delete(rowId)
+   return true;
+});
+
 
 resolver.define('addTableRow', async(req) => {
   console.log(req.payload.data);

@@ -7,8 +7,7 @@ import DropdownMenu, {
     DropdownItemGroup,
   } from '@atlaskit/dropdown-menu'
 import Form, { Field, HelperMessage, ErrorMessage } from '@atlaskit/form';
-import Textfield from '@atlaskit/textfield';
-import { Checkbox } from '@atlaskit/checkbox';
+
   
 import Modal, {
     ModalBody,
@@ -17,14 +16,13 @@ import Modal, {
     ModalTitle,
     ModalTransition,
   } from '@atlaskit/modal-dialog';
-  import TextArea from '@atlaskit/textarea';
-import GenericTextField from './components/generic/GenericTextField';
 import FirstNameTextField from './components/FirstNameTextField';
 import CommentTextArea from './components/CommentTextArea';
 import AddressTextArea from './components/AddressTextArea';
-import CheckBox from './components/checkBox';
+import CheckBox from './components/HasCommentCheckBox';
 
 function App() {
+    const [isChecked, setIsChecked] = useState(false);
     const [data, setData] = useState(null);
     const [presidents, setPresidents] = useState([])
     const [isOpen, setIsOpen] = useState(false);
@@ -67,24 +65,28 @@ function App() {
           ],
         };
       };
-      const onButtonClicker = () => {
-        console.log('test')
-      }
+
+
+      const onButtonClicker = async (operation, rowId) => {
+        console.log(operation)
+        console.log(rowId)
+        await invoke('deleteTableRow', { rowId })
+        } 
       const head = createHead(true);
       
       const rows = presidents.map((president, index) => ({
-        key: `row-${index}-${president["first-name"]}`,
+        key: `row-${index}-${president["value"]["first-name"]}`,
         isHighlighted: false,
         cells: [
           {
-            key: createKey(president["first-name"]),
+            key: createKey(president["value"]["first-name"]),
             content: (
-                <a href="https://atlassian.design">{president["first-name"]}</a>
+                <a href="https://atlassian.design">{president["value"]["first-name"]}</a>
             ),
           },
           {
-            key: createKey(president.address),
-            content: president.address,
+            key: createKey(president["value"].address),
+            content: president["value"].address,
           },
           /*{
             key: createKey(president.party),
@@ -95,16 +97,16 @@ function App() {
             content: president.term,
           },*/
           {
-            key: createKey(president.comment),
-            content: president.comment,
+            key: createKey(president["value"].comment),
+            content: president["value"].comment,
           },
           {
             key: 'MoreDropdown',
             content: (
               <DropdownMenu trigger="More">
                 <DropdownItemGroup>
-                  <DropdownItem><Button appearance="primary" onClick={onButtonClicker}>delete</Button></DropdownItem>
-                  <DropdownItem><Button appearance="primary" onClick={onButtonClicker}>edit</Button></DropdownItem>
+                  <DropdownItem><Button appearance="primary" onClick={onButtonClicker}>Edit</Button></DropdownItem>
+                  <DropdownItem><Button appearance="primary" onClick={() => onButtonClicker("delete", president["key"])}>Delete</Button></DropdownItem>
                 </DropdownItemGroup>
               </DropdownMenu>
             ),
@@ -113,10 +115,6 @@ function App() {
       }));
       
 
-   
-    const onButtonClick = () => {
-        console.log("button clicked 1")
-    }
     useEffect(() => {
       (async () => {
         console.log("my message")
@@ -132,8 +130,8 @@ function App() {
   const closeModal = useCallback(() => setIsOpen(false), []);
   const getNextData = async () =>{
     const tableState = await invoke('getData', { cursor: currentTableState.nextCursor});
-    console.log(rows)
-    setPresidents([...presidents, ...tableState.results.map(row => row.value)])
+    console.log(tableState)
+    setPresidents([...presidents, ...tableState.results.map(row => row)])
     setCurrentTableState(tableState)
   } 
   const onSetPage = async (page) => {
@@ -171,8 +169,12 @@ function App() {
               <ModalBody>
                 <FirstNameTextField/>
                 <AddressTextArea/>
-                <CheckBox/>
+                <CheckBox
+                 isChecked={isChecked}
+                 setIsChecked={setIsChecked}/>
+                {isChecked && (
                 <CommentTextArea/>
+                )}
                 
               </ModalBody>
               <ModalFooter>
@@ -203,6 +205,5 @@ function App() {
         </div>
     );
 }
-
 
 export default App;

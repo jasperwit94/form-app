@@ -13,7 +13,7 @@ export default function CommentTextArea() {
         }
     
        
-      };
+      };  
       return (
         <GenericTextArea id={"comment"} name = {"comment" } label= {"Comment"} placeholder={"Comment here at least 10"} validate={validateComment} />
     )
