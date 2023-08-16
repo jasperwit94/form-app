@@ -20,9 +20,9 @@ resolver.define('getData', async(req) => {
 });
 
 resolver.define('deleteTableRow', async(req) => {
-  console.log(req.payload.data);
-	//const rowId = payload.data;  
-	 await storage.delete(rowId)
+  console.log(req);
+   const rowId = req.payload.rowId;  
+   await storage.delete(rowId)
    return true;
 });
 

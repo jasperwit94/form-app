@@ -70,8 +70,16 @@ function App() {
       const onButtonClicker = async (operation, rowId) => {
         console.log(operation)
         console.log(rowId)
-        await invoke('deleteTableRow', { rowId })
-        } 
+        await invoke('deleteTableRow', { rowId }).then(successCallback, failureCallback);
+        
+        function successCallback() {
+          console.log(`yay it works`);
+          //getNextData();
+        }
+        function failureCallback() {
+          console.error(`aww too bad`);
+        }
+      }
       const head = createHead(true);
       
       const rows = presidents.map((president, index) => ({
