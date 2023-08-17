@@ -2,10 +2,10 @@ import React, { Fragment } from 'react';
 import { Field, ErrorMessage, HelperMessage } from '@atlaskit/form';
 import TextArea from '@atlaskit/textfield';
 
-export default function GenericTextArea ({id, name , label, validate, placeholder}) {
+export default function GenericTextArea ({id, name , label, validate, placeholder, defaultValue}) {
 
 
-    return (<Field id={id} name={name} label={label} placeholder={placeholder}  isRequired validate={validate}>
+    return (<Field id={id} name={name} label={label} placeholder={placeholder}  isRequired validate={validate} defaultValue={defaultValue}>
     {({ fieldProps,error }) => (
           <Fragment>
             <TextArea

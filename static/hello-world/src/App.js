@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState, ChangeEvent, } from 'react';
 import { invoke } from '@forge/bridge';
-import Button from '@atlaskit/button';
+import Button, { LoadingButton } from '@atlaskit/button';
 import DynamicTable from '@atlaskit/dynamic-table';
 import DropdownMenu, {
     DropdownItem,
@@ -30,6 +30,8 @@ function App() {
     const [currentTableState, setCurrentTableState] = useState({
       nextCursor : ''
     })
+    const [isTableLoadin, setISTableLoading] = useState(true)
+    const [editedItem, setEditedItem] = useState(undefined)
     
     function createKey(input) {
         return input ? input.replace(/^(the|a|an)/, '').replace(/\s/g, '') : input;
@@ -70,16 +72,23 @@ function App() {
       const onButtonClicker = async (operation, rowId) => {
         console.log(operation)
         console.log(rowId)
-        await invoke('deleteTableRow', { rowId }).then(successCallback, failureCallback);
-        
-        function successCallback() {
-          console.log(`yay it works`);
-          //getNextData();
-        }
-        function failureCallback() {
-          console.error(`aww too bad`);
-        }
+        try{
+          setISTableLoading(true)
+        await invoke('deleteTableRow', { rowId })
+        await reloadTable()
+        setISTableLoading(false)
+        console.log(`yay it works`);
+			} catch (error) {
+  console.error(`aww too bad`);}
       }
+
+      const onEditClicker = (president) =>{
+        console.log('were gonna edit', president)
+        setEditedItem(president)
+        openModal();
+      }
+      
+
       const head = createHead(true);
       
       const rows = presidents.map((president, index) => ({
@@ -113,7 +122,7 @@ function App() {
             content: (
               <DropdownMenu trigger="More">
                 <DropdownItemGroup>
-                  <DropdownItem><Button appearance="primary" onClick={onButtonClicker}>Edit</Button></DropdownItem>
+                  <DropdownItem><Button appearance="primary" onClick={() => onEditClicker((president))}>Edit</Button></DropdownItem>
                   <DropdownItem><Button appearance="primary" onClick={() => onButtonClicker("delete", president["key"])}>Delete</Button></DropdownItem>
                 </DropdownItemGroup>
               </DropdownMenu>
@@ -125,8 +134,9 @@ function App() {
 
     useEffect(() => {
       (async () => {
-        console.log("my message")
-      await getNextData()
+        setISTableLoading(true)
+        await getNextData()
+        setISTableLoading(false)
       })();
     }, [1]);
    
@@ -142,6 +152,14 @@ function App() {
     setPresidents([...presidents, ...tableState.results.map(row => row)])
     setCurrentTableState(tableState)
   } 
+
+  const reloadTable = async () =>{
+
+    const tableState = await invoke('getData', { cursor: ''});
+    console.log(tableState)
+    setPresidents([...tableState.results.map(row => row)])
+    setCurrentTableState(tableState)
+  } 
   const onSetPage = async (page) => {
     if (page * 5 > presidents.length) {
       console.log(" fetch new rows")
@@ -153,9 +171,10 @@ function App() {
   }
   const onSubmit = async(data) => {
 
-    console.log(" 111")
     console.log(data)
     const result = await invoke('addTableRow', { data });
+    setIsOpen(false)
+    reloadTable()
     console.log(result)
 
 
@@ -175,13 +194,13 @@ function App() {
                 <ModalTitle>Create a user</ModalTitle>
               </ModalHeader>
               <ModalBody>
-                <FirstNameTextField/>
-                <AddressTextArea/>
+                <FirstNameTextField defaultValue={editedItem ? editedItem.value["first-name"] : ""}/>
+                <AddressTextArea defaultValue={editedItem ? editedItem.value.address : ""}/>
                 <CheckBox
                  isChecked={isChecked}
                  setIsChecked={setIsChecked}/>
                 {isChecked && (
-                <CommentTextArea/>
+                <CommentTextArea defaultValue={editedItem ? editedItem.value.comment : ""}/>
                 )}
                 
               </ModalBody>
@@ -189,9 +208,9 @@ function App() {
                 <Button appearance="subtle" onClick={closeModal}>
                   Close
                 </Button>
-                <Button appearance="primary" type="submit">
+                <LoadingButton isLoading={submitting} appearance="primary" type="submit">
                   Create
-                </Button>
+                </LoadingButton>
               </ModalFooter>
               </form>
               )}
@@ -208,6 +227,7 @@ function App() {
       loadingSpinnerSize="large"
       isRankable
       onSetPage={onSetPage}
+      isLoading={isTableLoadin}
     />
   
         </div>

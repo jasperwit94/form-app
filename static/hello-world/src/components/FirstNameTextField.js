@@ -1,7 +1,8 @@
 import GenericTextField from "./generic/GenericTextField";
 
 
-export default function FirstNameTextField() {
+export default function FirstNameTextField({defaultValue}) {
+  console.log(defaultValue)
     const validateName = (value) => {
 
           if (value) {
@@ -12,6 +13,6 @@ export default function FirstNameTextField() {
       }
     
     return (
-        <GenericTextField id={"first-name"} name = {"first-name" } label= {"First Name"} placeholder={"Ian"} validate={validateName} />
+        <GenericTextField id={"first-name"} name = {"first-name" } label= {"First Name"} placeholder={"Ian"} validate={validateName} defaultValue={defaultValue}/>
     )
 }

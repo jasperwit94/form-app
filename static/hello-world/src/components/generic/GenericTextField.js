@@ -5,16 +5,15 @@ import { Field, ErrorMessage } from '@atlaskit/form';
 import Textfield from '@atlaskit/textfield';
   
 
-export default function GenericTextField ({id, name , label, placeholder, validate}) {
+export default function GenericTextField ({id, name , label, placeholder, validate, defaultValue}) {
 
 
-    return (<Field id={id} name={name} label={label} placeholder={placeholder}  isRequired validate={validate}>
+    return (<Field id={id} name={name} label={label} placeholder={placeholder}  isRequired validate={validate} defaultValue={defaultValue}>
     {({ fieldProps, error }) => (
       <Fragment>
         <Textfield
           {...fieldProps}
           placeholder={placeholder} 
-          value={undefined}
         />
         {error  && (
         <ErrorMessage>

@@ -26,6 +26,12 @@ resolver.define('deleteTableRow', async(req) => {
    return true;
 });
 
+resolver.define('editRow', async(req) => {
+   console.log(req);
+   const rowId = req.payload.rowId;  
+   console.log('until here')
+   return true;
+});
 
 resolver.define('addTableRow', async(req) => {
   console.log(req.payload.data);
