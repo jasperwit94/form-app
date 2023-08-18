@@ -6,23 +6,10 @@ import DropdownMenu, {
     DropdownItem,
     DropdownItemGroup,
   } from '@atlaskit/dropdown-menu'
-import Form, { Field, HelperMessage, ErrorMessage } from '@atlaskit/form';
-
-  
-import Modal, {
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    ModalTitle,
-    ModalTransition,
-  } from '@atlaskit/modal-dialog';
-import FirstNameTextField from './components/FirstNameTextField';
-import CommentTextArea from './components/CommentTextArea';
-import AddressTextArea from './components/AddressTextArea';
-import CheckBox from './components/HasCommentCheckBox';
+import ModalDialog from './components/ModalDialog';
 
 function App() {
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState(undefined);
     const [data, setData] = useState(null);
     const [presidents, setPresidents] = useState([])
     const [isOpen, setIsOpen] = useState(false);
@@ -138,14 +125,18 @@ function App() {
         await getNextData()
         setISTableLoading(false)
       })();
-    }, [1]);
+    }, []);
    
 
 
   const openModal = () => {
     setIsOpen(true)
   };
-  const closeModal = useCallback(() => setIsOpen(false), []);
+  const closeModal = useCallback(() => {
+    setIsOpen(false)
+    setEditedItem(undefined)
+    setIsChecked(false)}
+    , []);
   const getNextData = async () =>{
     const tableState = await invoke('getData', { cursor: currentTableState.nextCursor});
     console.log(tableState)
@@ -174,6 +165,7 @@ function App() {
     console.log(data)
     const result = await invoke('addTableRow', { data });
     setIsOpen(false)
+    setIsChecked(false)
     reloadTable()
     console.log(result)
 
@@ -184,40 +176,13 @@ function App() {
       <Button appearance="primary" onClick={openModal}>
         Open modal
       </Button>
-      <ModalTransition>
-        {isOpen && (
-          <Modal onClose={closeModal}>
-             <Form onSubmit={onSubmit}>
-             {({ formProps, submitting }) => (
-                <form {...formProps}>
-              <ModalHeader>
-                <ModalTitle>Create a user</ModalTitle>
-              </ModalHeader>
-              <ModalBody>
-                <FirstNameTextField defaultValue={editedItem ? editedItem.value["first-name"] : ""}/>
-                <AddressTextArea defaultValue={editedItem ? editedItem.value.address : ""}/>
-                <CheckBox
-                 isChecked={isChecked}
-                 setIsChecked={setIsChecked}/>
-                {isChecked && (
-                <CommentTextArea defaultValue={editedItem ? editedItem.value.comment : ""}/>
-                )}
-                
-              </ModalBody>
-              <ModalFooter>
-                <Button appearance="subtle" onClick={closeModal}>
-                  Close
-                </Button>
-                <LoadingButton isLoading={submitting} appearance="primary" type="submit">
-                  Create
-                </LoadingButton>
-              </ModalFooter>
-              </form>
-              )}
-            </Form>
-          </Modal>
-        )}
-      </ModalTransition>
+     <ModalDialog
+     
+     isOpen = {isOpen}
+      onSubmit ={onSubmit} 
+      closeModal = {closeModal}
+      editedItem = {editedItem} 
+     />
 
     <DynamicTable
       head={head}

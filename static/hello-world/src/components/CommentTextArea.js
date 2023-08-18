@@ -2,8 +2,9 @@ import React, { Fragment } from 'react';
 import GenericTextArea from './generic/GenericTextArea';
 
 
-export default function CommentTextArea(defaultValue) {
+export default function CommentTextArea({defaultValue, prop1}) {
   console.log(defaultValue)
+  console.log(prop1)
     const validateComment = (value) => {
         if (!value) {
           return ;

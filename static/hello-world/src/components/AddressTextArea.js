@@ -3,7 +3,9 @@ import GenericTextField from './generic/GenericTextField';
 
 
 
-export default function AddressTextArea(defaultValue){
+export default function AddressTextArea({defaultValue}){
+  console.log("addres" , defaultValue)
+ 
     const validateAddress = (value) => {
         if (!value) {
           return ;
@@ -14,7 +16,7 @@ export default function AddressTextArea(defaultValue){
         }
       };
       return (
-        <GenericTextField id={"address"} name = {"address" } label= {"address"} placeholder={"street town"} validate={validateAddress} defaultValue={defaultValue} />
+        <GenericTextField id={"address"} name = {"address" } label= {"address"} placeholder={"street town"} validate={validateAddress} defaultValue={defaultValue}/>
     )
 
 }
